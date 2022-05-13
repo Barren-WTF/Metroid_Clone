@@ -7,30 +7,25 @@ public class Hard_Enemies : MonoBehaviour
 {
     //game objects will be used to control the direction in which the enemy moves
     public GameObject target;
-   
 
-
-    //will be used to store the transform postiions of the game object
-    private Vector3 targetPos;
+    private Rigidbody rb;
 
     //speed modifier for the enemy game object
     public int speed;
-
-    //used to store the true/false in regards to the object moving left
-    public bool goingLeft;
 
     //health modifier
     public int health;
 
     private void Start()
     {
-        targetPos = target.transform.position;
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         Move();
+        stopMove();
         checkHealth();
     }
 
@@ -39,38 +34,25 @@ public class Hard_Enemies : MonoBehaviour
     //function for making the enemy game object move back and forth between two points
     private void Move()
     {
-
-        //sees if goingLeft is true
-        if (goingLeft == true)
+        if (transform.position.x < target.transform.position.x)
         {
-            //if the x position of the enemey game object does not exceed the x position of the set left point, then going left is false
-            if (transform.position.x <= targetPos.x)
-            {
-                goingLeft = false;
-            }
-
-            //if goingleft is true, then the object will move left
-            else
-            {
-                transform.position += Vector3.left * Time.deltaTime * speed;
-            }
+            rb.velocity = new Vector3(speed, 0, 0);
         }
 
-        //if going left is false, then this is executed
-        else
+        else if (transform.position.x > target.transform.position.x)
         {
-            //if the x position of the enemey game object is greater than or equal the x position of the set right point, then going left is true
-            if (transform.position.x >= targetPos.x)
-            {
-                goingLeft = true;
-            }
-            else
-            {
-                //if goingLeft is false, then object will move right
-                transform.position += Vector3.right * Time.deltaTime * speed;
-            }
+            rb.velocity = new Vector3(-speed, 0, 0);
         }
     }
+
+    public void stopMove()
+    {
+        if (GetComponent<Player>().health <= 0)
+        {
+            rb.velocity = new Vector3(0, 0, 0);
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
 

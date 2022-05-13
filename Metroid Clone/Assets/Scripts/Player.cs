@@ -66,7 +66,11 @@ public class Player : MonoBehaviour
         //if the player runs into a regular enemy, they lose 15 hp
         if (other.gameObject.tag == "Regular Enemy")
         {
-            health = health - 15;
+            health -= 15;
+            if (health <= 0)
+            {
+                health = 0;
+            }
             healthCheck();
             Destroy(other.gameObject);
         }
@@ -74,7 +78,7 @@ public class Player : MonoBehaviour
         //if the player runs into a hard enemy, they lose 65 hp
         if (other.gameObject.tag == "Hard Enemy")
         {
-            health = health - 65;
+            health -= 65;
             healthCheck();
             Destroy(other.gameObject);
         }
@@ -83,10 +87,6 @@ public class Player : MonoBehaviour
         if(other.gameObject.tag == "Health")
         {
             health += healthGain;
-            if (health > maxHealth)
-            {
-                health = maxHealth;
-            }
             Destroy(other.gameObject);
         }
 
@@ -252,6 +252,7 @@ public class Player : MonoBehaviour
         //if they are out of lives, the player is deactivated, and the the death message is displayed.
         if (health <= 0)
         {
+            health = 0;
             this.enabled = false;
             death.text = "Game Over";
         }

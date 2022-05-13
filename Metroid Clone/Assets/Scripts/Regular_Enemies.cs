@@ -13,8 +13,15 @@ public class Regular_Enemies : MonoBehaviour
     //health modifier
     public int health;
 
+    private Rigidbody rb;
+
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
+
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         Move();
         checkHealth();
