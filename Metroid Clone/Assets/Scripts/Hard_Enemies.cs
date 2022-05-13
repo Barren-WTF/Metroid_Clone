@@ -78,16 +78,17 @@ public class Hard_Enemies : MonoBehaviour
         if (other.gameObject.tag == "regularBullet")
         {
 
-            //if tag is regularBullet, enemy looses one health
-            health--;
-        }
+            //if tag is regularBullet, and the function isBig from the Regular bullet script returns true, enemy looses three health
+            if (other.gameObject.GetComponent<Regular_Bullet>().isBig() == true)
+            {
+                health -= 3;
+            }
 
-        //checks collided object tag
-        if (other.gameObject.tag == "bigBullet")
-        {
-
-            //if tag is bigBullet, enemy looses three health
-            health -= 3;
+            //eif the above is false then the enemy loses one health
+            else
+            {
+                health--;
+            }
         }
     }
 
@@ -96,7 +97,7 @@ public class Hard_Enemies : MonoBehaviour
     {
         if (health <= 0)
         {
-            Destroy(this);
+            Destroy(this.gameObject);
         }
     }
 }

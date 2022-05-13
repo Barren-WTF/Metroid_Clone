@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2017226479402047473}
   - component: {fileID: 3023113583480962609}
   - component: {fileID: 1521215444819920622}
-  - component: {fileID: 989323164810373910}
+  - component: {fileID: 4452579971345083675}
   m_Layer: 0
   m_Name: regularBullet
   m_TagString: regularBullet
@@ -96,7 +96,7 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &989323164810373910
+--- !u!114 &4452579971345083675
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -110,4 +110,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   goingLeft: 0
-  goingForward: 0
+  bigBullet: 0

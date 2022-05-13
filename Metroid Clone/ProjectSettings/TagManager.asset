@@ -13,6 +13,8 @@ TagManager:
   - Hard Enemy
   - Jet Pack
   - player
+  - Blue Door
+  - Red Door
   layers:
   - Default
   - TransparentFX

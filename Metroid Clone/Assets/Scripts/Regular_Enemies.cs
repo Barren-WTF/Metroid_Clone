@@ -55,28 +55,51 @@ public class Regular_Enemies : MonoBehaviour
             }
         }
 
+        if (other.gameObject.tag == "Regular Enemy")
+        {
+            //if going left is true, it will be changed to false
+            if (goingLeft == true)
+            {
+                goingLeft = false;
+            }
+
+            //if going left is false, it will be changed to true
+            else if (goingLeft == false)
+            {
+                goingLeft = true;
+            }
+        }
+
+        if (other.gameObject.tag == "Hard Enemy")
+        {
+            //if going left is true, it will be changed to false
+            if (goingLeft == true)
+            {
+                goingLeft = false;
+            }
+
+            //if going left is false, it will be changed to true
+            else if (goingLeft == false)
+            {
+                goingLeft = true;
+            }
+        }
+
         //checks collided object tag
         if (other.gameObject.tag == "regularBullet")
         {
 
-            //if tag is regularBullet, enemy looses one health
-            if (other.gameObject.GetComponent<Regular_Bullet>().isBig())
+            //if tag is regularBullet, and the function isBig from the Regular bullet script returns true, enemy looses three health
+            if (other.gameObject.GetComponent<Regular_Bullet>().isBig() == true)
             {
                 health -= 3;
             }
+
+            //eif the above is false then the enemy loses one health
             else
             {
                 health--;
             }
-            
-        }
-
-        //checks collided object tag
-        if (other.gameObject.tag == "bigBullet")
-        {
-
-            //if tag is bigBullet, enemy looses three health
-            health -= 3;
         }
     }
 
@@ -85,7 +108,7 @@ public class Regular_Enemies : MonoBehaviour
     {
         if (health <= 0)
         {
-            Destroy(this);
+            Destroy(this.gameObject);
         }
     }
 }

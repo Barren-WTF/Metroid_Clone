@@ -61,14 +61,35 @@ public class Regular_Bullet : MonoBehaviour
     //if this object collides with a specified tagged object it is destroyed
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Boss")
+        if (other.gameObject.tag == "Hard Enemy")
         {
             Destroy(this.gameObject);
         }
 
-        if (other.gameObject.tag == "Enemy")
+        if (other.gameObject.tag == "Regular Enemy")
         {
             Destroy(this.gameObject);
+        }
+
+        if (other.gameObject.tag == "Wall")
+        {
+            Destroy(this.gameObject);
+        }
+
+        if (other.gameObject.tag == "Blue Door")
+        {
+            Destroy(this.gameObject);
+            Destroy(other.gameObject);
+        }
+
+        if (other.gameObject.tag == "Red Door")
+        {
+            Destroy(this.gameObject);
+            if (bigBullet == true)
+            {
+                Destroy(other.gameObject);
+            }
+            
         }
     }
 }
