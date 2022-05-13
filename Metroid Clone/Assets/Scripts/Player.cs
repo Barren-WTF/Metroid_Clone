@@ -19,6 +19,9 @@ public class Player : MonoBehaviour
     //multiplier for jumping force
     public int jumpforce;
 
+    //controllable parameter for jetpump jump force
+    public int jetPack;
+
     //variable for checking if player is grounded
     public bool isGrounded;
 
@@ -39,7 +42,9 @@ public class Player : MonoBehaviour
     public GameObject bigBulletPrefab;
 
 
-    private Vector3 startPosition;
+    //private Vector3 startPosition;
+
+    private int sceneNumber = 2;
 
     //UI variables
     public Text win;
@@ -50,6 +55,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         rigid_body = GetComponent<Rigidbody>();
+        //startPosition = new Vector3(-14.0f, -3.7f, 0f);
     }
 
     void FixedUpdate()
@@ -102,7 +108,7 @@ public class Player : MonoBehaviour
 
         if (other.gameObject.tag == "Jet Pack")
         {
-            jumpforce += jumpforce * 2;
+            jumpforce = jetPack;
             Destroy(other.gameObject);
         }
 
@@ -112,8 +118,11 @@ public class Player : MonoBehaviour
             Destroy(other.gameObject);
         }
 
+        if (other.gameObject.tag == "Gateway")
+        {
+            SceneSwitch.instance.switchScene(sceneNumber++);
+        }
 
-        
     }
 
     //allows the player to move left and right
@@ -172,10 +181,10 @@ public class Player : MonoBehaviour
         }
 
         //draws a red line showing the raycast
-        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
+        //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
 
         //sends value of hit.distance to log
-        Debug.Log(hit.distance);
+        //Debug.Log(hit.distance);
     }
 
     private void shootingBullet()
@@ -249,12 +258,15 @@ public class Player : MonoBehaviour
     //respawns the player at the starting point and checks if they have no more lives
     private void healthCheck()
     {
+        setText();
+
         //if they are out of lives, the player is deactivated, and the the death message is displayed.
         if (health <= 0)
         {
             health = 0;
+            setText();
+            StartCoroutine(gameOver());
             this.enabled = false;
-            death.text = "Game Over";
         }
     }
 
@@ -262,5 +274,22 @@ public class Player : MonoBehaviour
     void setText()
     {
         healthText.text = "Health: " + health.ToString();
+    }
+
+    IEnumerator gameOver()
+    {
+        {
+            death.text = "Game Over";
+            yield return new WaitForSeconds(3.0f);
+            death.text = "Returning to Menu in 5 seconds";
+            StartCoroutine(backToMenu());
+
+        }
+    }
+    IEnumerator backToMenu()
+    {
+        yield return new WaitForSeconds(5.0f);
+        SceneSwitch.instance.gameOver(0);
+        print("returned to menu");
     }
 }

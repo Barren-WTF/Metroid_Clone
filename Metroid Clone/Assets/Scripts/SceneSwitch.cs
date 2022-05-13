@@ -11,30 +11,41 @@ public class SceneSwitch : MonoBehaviour
 
     public static SceneSwitch instance;
 
+
     // Start is called before the first frame update
     void Start()
     {
-        //when the new scene is loaded these items are not destroyed.
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(player);
+            Destroy(mainCamera);
+            Destroy(UI);
+            Destroy(this.gameObject);
+        }
+
         DontDestroyOnLoad(player);
         DontDestroyOnLoad(mainCamera);
-        DontDestroyOnLoad(this.gameObject);
         DontDestroyOnLoad(UI);
+        DontDestroyOnLoad(this.gameObject);
+
     }
 
     //move to the scene number indicated
     public void switchScene(int sceneNumber)
     {
-        SceneManager.LoadScene(sceneNumber);
-    }
-    public void PlayGame()
-    {
-        SceneManager.LoadScene("Scene 1");
+        SceneManager.LoadScene(sceneNumber);    
     }
 
-    public void QuitGame()
+    public void gameOver(int sceneNumber)
     {
-        Debug.Log("QUIT!");
-        Application.Quit();
+        Destroy(player);
+        Destroy(mainCamera);
+        Destroy(UI);
+        Destroy(this.gameObject);
+        SceneManager.LoadScene(sceneNumber);
     }
 }
