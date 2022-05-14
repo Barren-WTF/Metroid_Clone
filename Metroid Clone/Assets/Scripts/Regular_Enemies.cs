@@ -1,3 +1,9 @@
+/*
+ * Author: Marco Ramirez-Buckles
+ * Date: 5/13/2022
+ * Last Updated: 5/13/2022 Marco Ramirez-Buckles
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -90,6 +96,13 @@ public class Regular_Enemies : MonoBehaviour
             {
                 goingLeft = true;
             }
+            
+        }
+
+        //destroys enemy if it makes contact with death barrier
+        if (other.gameObject.tag == "Death Barrier")
+        {
+            Destroy(this.gameObject);
         }
 
         //checks collided object tag
@@ -100,12 +113,18 @@ public class Regular_Enemies : MonoBehaviour
             if (other.gameObject.GetComponent<Regular_Bullet>().isBig() == true)
             {
                 health -= 3;
+
+                //checks the health everytime it is damaged
+                checkHealth();
             }
 
             //eif the above is false then the enemy loses one health
             else
             {
-                health--;
+                health-= 1;
+
+                //checks the health everytime it is damaged
+                checkHealth();
             }
         }
     }

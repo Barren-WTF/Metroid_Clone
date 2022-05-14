@@ -1,3 +1,9 @@
+/*
+ * Author: Marco Ramirez-Buckles
+ * Date: 5/13/2022
+ * Last Updated: 5/13/2022 Marco Ramirez-Buckles
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

@@ -17,6 +17,8 @@ TagManager:
   - Red Door
   - Gateway
   - Gateway 1
+  - Death Barrier
+  - Laser
   layers:
   - Default
   - TransparentFX

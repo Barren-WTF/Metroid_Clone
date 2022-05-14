@@ -1,3 +1,9 @@
+/*
+ * Author: Marco Ramirez-Buckles
+ * Date: 5/13/2022
+ * Last Updated: 5/13/2022 Marco Ramirez-Buckles
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -42,10 +48,10 @@ public class SceneSwitch : MonoBehaviour
 
     public void gameOver(int sceneNumber)
     {
+        SceneManager.LoadScene(sceneNumber);
         Destroy(player);
         Destroy(mainCamera);
         Destroy(UI);
         Destroy(this.gameObject);
-        SceneManager.LoadScene(sceneNumber);
     }
 }

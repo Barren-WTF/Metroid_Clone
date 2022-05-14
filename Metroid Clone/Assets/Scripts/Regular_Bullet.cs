@@ -1,3 +1,9 @@
+/*
+ * Author: Marco Ramirez-Buckles
+ * Date: 5/13/2022
+ * Last Updated: 5/13/2022 Marco Ramirez-Buckles
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -46,13 +52,14 @@ public class Regular_Bullet : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-
+    //scales the bullet prefab up
     public void scaleUp()
     {
         transform.localScale += new Vector3(.7f, .7f, .7f);
         bigBullet = true;
     }
 
+    //for player script, allows player script to determine if bigbullet is true
     public bool isBig()
     {
         return bigBullet;

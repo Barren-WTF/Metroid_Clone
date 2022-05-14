@@ -1,11 +1,18 @@
+/*
+ * Author: Marco Ramirez-Buckles
+ * Date: 5/13/2022
+ * Last Updated: 5/13/2022 Marco Ramirez-Buckles
+ */
+
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
-    //public int sceneNum;
 
     //public variable that sets the players health
     public int health = 100;
@@ -30,26 +37,27 @@ public class Player : MonoBehaviour
 
     public int maxHealth = 100;
 
+    private int sceneNumber;
+
     //variable for counting how many times a max health pickup has been collided with
     private int maxHealthCounter = 0;
 
+    //variable for coroutine to controll shooting frequency
     private bool canShoot = true;
 
     private Rigidbody rigid_body;
+
+    //adjustable variable that designate how long the player must survive in scene 9 before they clear the level and are returned to the main menu
+    public int survivalTime;
 
     //variables that allow for the attachment of game objects
     public GameObject regularBulletPrefab;
     public GameObject bigBulletPrefab;
 
-
-    //private Vector3 startPosition;
-
-    private int sceneNumber = 2;
-
     //UI variables
-    public Text win;
     public Text healthText;
     public Text death;
+    public Text survival;
 
     // Start is called before the first frame update
     void Start()
@@ -65,6 +73,7 @@ public class Player : MonoBehaviour
         jump();
         setText();
         healthCheck();
+        Horde();
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -77,7 +86,7 @@ public class Player : MonoBehaviour
             {
                 health = 0;
             }
-            healthCheck();
+            
             Destroy(other.gameObject);
         }
 
@@ -85,7 +94,11 @@ public class Player : MonoBehaviour
         if (other.gameObject.tag == "Hard Enemy")
         {
             health -= 65;
-            healthCheck();
+            if (health <= 0)
+            {
+                health = 0;
+            }
+       
             Destroy(other.gameObject);
         }
 
@@ -93,6 +106,10 @@ public class Player : MonoBehaviour
         if(other.gameObject.tag == "Health")
         {
             health += healthGain;
+            if (health >= maxHealth)
+            {
+                health = maxHealth;
+            }
             Destroy(other.gameObject);
         }
 
@@ -106,23 +123,44 @@ public class Player : MonoBehaviour
             Destroy(other.gameObject);
         }
 
+        //player collides with designated tag, jumpforce value is changed to that of jetpack
         if (other.gameObject.tag == "Jet Pack")
         {
             jumpforce = jetPack;
             Destroy(other.gameObject);
         }
 
+        //if player collides wioth tag, bigbullet is enabled
         if (other.gameObject.tag == "bigBullet")
         {
             bigBulletPickUp = true;
             Destroy(other.gameObject);
         }
 
+        //will kill player if they collide with tag
+        if (other.gameObject.tag == "Death Barrier")
+        {
+            health = 0;
+            healthCheck();
+        }
+
+        //takes player to the next scene
         if (other.gameObject.tag == "Gateway")
         {
             SceneSwitch.instance.switchScene(sceneNumber++);
         }
 
+        //player looses 15 hp everytime they contact a laser
+        if (other.gameObject.tag == "Laser")
+        {
+            health -= 15;
+            if (health <= 0)
+            {
+                health = 0;
+            }
+            healthCheck();
+            Destroy(other.gameObject);
+        }
     }
 
     //allows the player to move left and right
@@ -155,7 +193,7 @@ public class Player : MonoBehaviour
         isPlayerGrounded();
 
         //if the player is grounded, they it can jump via the space key
-        if (Input.GetKey("space") && isGrounded)
+        if (Input.GetKey("w") && isGrounded)
         {
             //hitting the space key adds a jump force in the upwards direction to the player
             rigid_body.AddForce(Vector3.up * jumpforce);
@@ -181,22 +219,27 @@ public class Player : MonoBehaviour
         }
 
         //draws a red line showing the raycast
-        //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
+        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
 
         //sends value of hit.distance to log
-        //Debug.Log(hit.distance);
+        Debug.Log(hit.distance);
     }
 
+    //function defines the keys for shooting left and right
     private void shootingBullet()
     {
+        //when j is pressed, shoots left
         if (Input.GetKey("j"))
         {
+            //if canShoot is true
             if (canShoot)
             {
+                //start shooting, couroutine is used to limit the player to only shooting 2 times a second
                 StartCoroutine(shooting(true));
             }
         }
 
+        //when j is pressed, shoots right
         else if (Input.GetKey("l"))
         {
             if (canShoot)
@@ -206,9 +249,10 @@ public class Player : MonoBehaviour
         }
     }
 
-    //detects with direction the player is trying to shoot and calls the script to make them shoot that direction
+    //detects wich direction the player is trying to shoot, also provents player from shooting too quickly by forcing them to wait a certain amount of time before shooting again
     IEnumerator shooting(bool left)
     {
+        //checking for pick up
         if (bigBulletPickUp == false)
         {
             regGun(left);
@@ -240,9 +284,10 @@ public class Player : MonoBehaviour
         }
     }
 
+    //same as regGun but for the big bullet
     public void bigGun(bool left)
     {
-        //if the bigBulletPickUp is true, then the shooting keys will control the Big Bullet script
+        //if the bigBulletPickUp is true, then the shooting keys will control the bullet script, if the pickup returns true, the prefab is scaled up
         if (bigBulletPickUp == true)
         {
             print("big bullet true");
@@ -258,6 +303,7 @@ public class Player : MonoBehaviour
     //respawns the player at the starting point and checks if they have no more lives
     private void healthCheck()
     {
+        //updates UI
         setText();
 
         //if they are out of lives, the player is deactivated, and the the death message is displayed.
@@ -270,12 +316,53 @@ public class Player : MonoBehaviour
         }
     }
 
+    //function detects for the final scene in game, if the statement returns true it carrys out the coroutine
+    private void Horde()
+    {
+        int currentScene;
+        currentScene = SceneManager.GetActiveScene().buildIndex;
+        if (currentScene == 9)
+        {
+            StartCoroutine(Survive());
+        }
+    }
+
+    //a way of setting a survival timer, if player still has health after a specified time in the waitfor, then the player has survived the horde round
+    IEnumerator Survive()
+    {
+        yield return new WaitForSeconds(survivalTime);
+
+        //checks if player is still alive
+        if (health > 0)
+        {
+            StartCoroutine(YouSurvived());
+        }
+    }
+
+    //lets player know they survived and take player back to main menu after a few seconds
+    IEnumerator YouSurvived()
+    {
+        {
+            //ui element, diplays for 5 seconds
+            survival.text = "YOU SURVIVED!";
+
+            yield return new WaitForSeconds(5.0f);
+
+            //ui element, displays for a few seconds
+            survival.text = "Returning to Menu in 5 seconds";
+
+            StartCoroutine(backToMenu());
+
+        }
+    }
+
     //reinitalizes the health text
     void setText()
     {
         healthText.text = "Health: " + health.ToString();
     }
 
+    //if the player runs out of health, they are returned to the main menu after a few seconds
     IEnumerator gameOver()
     {
         {
@@ -283,9 +370,10 @@ public class Player : MonoBehaviour
             yield return new WaitForSeconds(3.0f);
             death.text = "Returning to Menu in 5 seconds";
             StartCoroutine(backToMenu());
-
         }
     }
+
+    //takes the player back to the main menu after five seconds when called
     IEnumerator backToMenu()
     {
         yield return new WaitForSeconds(5.0f);

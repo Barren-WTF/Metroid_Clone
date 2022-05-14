@@ -129,7 +129,8 @@ MonoBehaviour:
   health: 100
   speed: 7
   bigBulletPickUp: 0
-  jumpforce: 50
+  jumpforce: 80
+  jetPack: 160
   isGrounded: 0
   healthGain: 25
   maxHealth: 100

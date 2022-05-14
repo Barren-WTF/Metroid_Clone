@@ -1,3 +1,9 @@
+/*
+ * Author: Marco Ramirez-Buckles
+ * Date: 5/13/2022
+ * Last Updated: 5/13/2022 Marco Ramirez-Buckles
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,8 +11,8 @@ using UnityEngine.AI;
 
 public class Hard_Enemies : MonoBehaviour
 {
-    //game objects will be used to control the direction in which the enemy moves
-    public GameObject target;
+    //stors transform information of a choosen object
+    public Transform target;
 
     private Rigidbody rb;
 
@@ -19,38 +25,24 @@ public class Hard_Enemies : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        //target = FindObjectOfType<Player>().transform;
+
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        Move();
-        stopMove();
+        enemyFollow();
         checkHealth();
     }
 
-
-
-    //function for making the enemy game object move back and forth between two points
-    private void Move()
+    //function allows for enemy to follow designated target based on the players and enemies transform information
+    void enemyFollow()
     {
-        if (transform.position.x < target.transform.position.x)
-        {
-            rb.velocity = new Vector3(speed, 0, 0);
-        }
-
-        else if (transform.position.x > target.transform.position.x)
-        {
-            rb.velocity = new Vector3(-speed, 0, 0);
-        }
-    }
-
-    public void stopMove()
-    {
-        if (GetComponent<Player>().health <= 0)
-        {
-            rb.velocity = new Vector3(0, 0, 0);
-        }
+        Vector3 pos = Vector3.MoveTowards(transform.position, target.position, speed * Time.fixedDeltaTime);
+        rb.MovePosition(pos);
+        //transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -64,13 +56,24 @@ public class Hard_Enemies : MonoBehaviour
             if (other.gameObject.GetComponent<Regular_Bullet>().isBig() == true)
             {
                 health -= 3;
+
+                //checks the health everytime it is damaged
+                checkHealth();
             }
 
-            //eif the above is false then the enemy loses one health
+            //if the above is false then the enemy loses one health
             else
             {
-                health--;
+                health -= 1;
+
+                //checks the health everytime it is damaged
+                checkHealth();
             }
+        }
+
+        if (other.gameObject.tag == "Death Barrier")
+        {
+            Destroy(this.gameObject);
         }
     }
 
